@@ -11,4 +11,4 @@ for file in glob.glob("*.json"):
     except OSError as e:
         print(e)
     else:
-        print("Renamed {} to {}".format(file, new_file_name))
+        print(f"Renamed {file} to {new_file_name}")

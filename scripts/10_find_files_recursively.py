@@ -7,14 +7,16 @@ PATTERN = '*.md'
 
 
 def get_file_names(filepath, pattern):
-    matches = []
     if os.path.exists(filepath):
+        matches = []
         for root, dirnames, filenames in os.walk(filepath):
-            for filename in fnmatch.filter(filenames, pattern):
-                # matches.append(os.path.join(root, filename))  # full path
-                matches.append(os.path.join(filename))  # just file name
+            matches.extend(
+                os.path.join(filename)
+                for filename in fnmatch.filter(filenames, pattern)
+            )
+
         if matches:
-            print("Found {} files:".format(len(matches)))
+            print(f"Found {len(matches)} files:")
             output_files(matches)
         else:
             print("No files found.")
