@@ -13,14 +13,19 @@ PATTERN = '*.jpg'
 
 
 def get_image_file_names(filepath, pattern):
-    matches = []
     if os.path.exists(filepath):
+        matches = []
         for root, dirnames, filenames in os.walk(filepath):
-            for filename in fnmatch.filter(filenames, pattern):
-                matches.append(os.path.join(root, filename))  # full path
+            matches.extend(
+                os.path.join(root, filename)
+                for filename in fnmatch.filter(filenames, pattern)
+            )
+
         if matches:
-            print("Found {} files, with a total file size of {}.".format(
-                len(matches), get_total_size(matches)))
+            print(
+                f"Found {len(matches)} files, with a total file size of {get_total_size(matches)}."
+            )
+
             return matches
         else:
             print("No files found.")
@@ -29,15 +34,16 @@ def get_image_file_names(filepath, pattern):
 
 
 def get_total_size(list_of_image_names):
-    total_size = 0
-    for image_name in list_of_image_names:
-        total_size += os.path.getsize(image_name)
+    total_size = sum(
+        os.path.getsize(image_name) for image_name in list_of_image_names
+    )
+
     return size(total_size)
 
 
 def resize_images(list_of_image_names):
     print("Optimizing ... ")
-    for index, image_name in enumerate(list_of_image_names):
+    for image_name in list_of_image_names:
         with open(image_name) as f:
             image_binary = f.read()
         with Image(blob=image_binary) as img:

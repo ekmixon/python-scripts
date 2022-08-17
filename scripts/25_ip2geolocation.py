@@ -11,8 +11,7 @@ def get_addresses(filename):
     all_addresses = []
     with open(filename, 'rt') as f:
         reader = csv.reader(f)
-        for row in reader:
-            all_addresses.append(row)
+        all_addresses.extend(iter(reader))
     return all_addresses
 
 
@@ -23,17 +22,15 @@ def get_geolocation(all_the_ip_address):
     """
     print("Getting geo information...")
     updated_addresses = []
-    counter = 1
     # update header
     header_row = all_the_ip_address.pop(0)
     header_row.extend(['Country', 'City'])
     # get geolocation
-    for line in all_the_ip_address:
+    for counter, line in enumerate(all_the_ip_address, start=1):
         print("Grabbing geo info for row # {0}".format(counter))
         r = requests.get('https://freegeoip.net/json/{0}'.format(line[0]))
         line.extend([str(r.json()['country_name']), str(r.json()['city'])])
         updated_addresses.append(line)
-        counter += 1
     updated_addresses.insert(0, header_row)
     return updated_addresses
 
